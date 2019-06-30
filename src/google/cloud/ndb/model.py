@@ -2914,7 +2914,7 @@ class UserProperty(Property):
             >>>
             >>> entity.put()
             >>> # Reload without the cached values
-            >>> entity = entity.key.get(use_cache=False, use_memcache=False)
+            >>> entity = entity.key.get(use_cache=False, use_remote_cache=False)
             >>> entity.u.user_id()
             '...9174...'
 
@@ -4668,9 +4668,9 @@ class Model(metaclass=MetaModel):
         deadline=None,
         force_writes=None,
         use_cache=None,
-        use_memcache=None,
+        use_remote_cache=None,
         use_datastore=None,
-        memcache_timeout=None,
+        remote_cache_timeout=None,
         max_memcache_items=None,
         _options=None,
     ):
@@ -4691,12 +4691,13 @@ class Model(metaclass=MetaModel):
                 user controlled read-only periods.)
             use_cache (bool): Specifies whether to store entities in in-process
                 cache; overrides in-process cache policy for this operation.
-            use_memcache (bool): Specifies whether to store entities in
-                memcache; overrides memcache policy for this operation.
+            use_remote_cache (bool): Specifies whether to store entities in
+                remote cache; overrides remote cache policy for this operation.
             use_datastore (bool): Specifies whether to store entities in
                 Datastore; overrides Datastore policy for this operation.
-            memcache_timeout (int): Maximum lifetime for entities in memcache;
-                overrides memcache timeout policy for this operation.
+            remote_cache_timeout (int): Maximum lifetime for entities in
+                remote cache; overrides remote cache timeout policy for this
+                operation.
             max_memcache_items (int): Maximum batch size for the auto-batching
                 feature of the Context memcache methods. For example, with the
                 default size of max_memcache_items (100), up to 100 memcache
@@ -4719,9 +4720,9 @@ class Model(metaclass=MetaModel):
         deadline=None,
         force_writes=None,
         use_cache=None,
-        use_memcache=None,
+        use_remote_cache=None,
         use_datastore=None,
-        memcache_timeout=None,
+        remote_cache_timeout=None,
         max_memcache_items=None,
         _options=None,
     ):
@@ -4742,12 +4743,13 @@ class Model(metaclass=MetaModel):
                 user controlled read-only periods.)
             use_cache (bool): Specifies whether to store entities in in-process
                 cache; overrides in-process cache policy for this operation.
-            use_memcache (bool): Specifies whether to store entities in
-                memcache; overrides memcache policy for this operation.
+            use_remote_cache (bool): Specifies whether to store entities in
+                remote cache; overrides remote cache policy for this operation.
             use_datastore (bool): Specifies whether to store entities in
                 Datastore; overrides Datastore policy for this operation.
-            memcache_timeout (int): Maximum lifetime for entities in memcache;
-                overrides memcache timeout policy for this operation.
+            remote_cache_timeout (int): Maximum lifetime for entities in
+                remote cache; overrides remote cache timeout policy for this
+                operation.
             max_memcache_items (int): Maximum batch size for the auto-batching
                 feature of the Context memcache methods. For example, with the
                 default size of max_memcache_items (100), up to 100 memcache
@@ -4764,8 +4766,8 @@ class Model(metaclass=MetaModel):
         @tasklets.tasklet
         def put(self):
             context = context_module.get_context()
-            use_memcache = context._use_memcache(self.key, _options)
-            if use_memcache and self._has_complete_key():
+            use_remote_cache = context._use_remote_cache(self.key, _options)
+            if use_remote_cache and self._has_complete_key():
                 yield remote_cache.cache_set_locked(self.key)
 
             entity_pb = _entity_to_protobuf(self)
@@ -4774,7 +4776,7 @@ class Model(metaclass=MetaModel):
                 ds_key = helpers.key_from_protobuf(key_pb)
                 self._key = key_module.Key._from_ds_key(ds_key)
 
-                if use_memcache and not context.in_transaction():
+                if use_remote_cache and not context.in_transaction():
                     yield remote_cache.cache_delete(self.key)
 
                 if context._use_cache(self._key, _options):
@@ -4878,9 +4880,9 @@ class Model(metaclass=MetaModel):
         deadline=None,
         force_writes=None,
         use_cache=None,
-        use_memcache=None,
+        use_remote_cache=None,
         use_datastore=None,
-        memcache_timeout=None,
+        remote_cache_timeout=None,
         max_memcache_items=None,
         _options=None,
     ):
@@ -4902,12 +4904,13 @@ class Model(metaclass=MetaModel):
                 user controlled read-only periods.)
             use_cache (bool): Specifies whether to store entities in in-process
                 cache; overrides in-process cache policy for this operation.
-            use_memcache (bool): Specifies whether to store entities in
-                memcache; overrides memcache policy for this operation.
+            use_remote_cache (bool): Specifies whether to store entities in
+                remote cache; overrides remote cache policy for this operation.
             use_datastore (bool): Specifies whether to store entities in
                 Datastore; overrides Datastore policy for this operation.
-            memcache_timeout (int): Maximum lifetime for entities in memcache;
-                overrides memcache timeout policy for this operation.
+            remote_cache_timeout (int): Maximum lifetime for entities in
+                remote cache; overrides remote cache timeout policy for this
+                operation.
             max_memcache_items (int): Maximum batch size for the auto-batching
                 feature of the Context memcache methods. For example, with the
                 default size of max_memcache_items (100), up to 100 memcache
@@ -4935,9 +4938,9 @@ class Model(metaclass=MetaModel):
         deadline=None,
         force_writes=None,
         use_cache=None,
-        use_memcache=None,
+        use_remote_cache=None,
         use_datastore=None,
-        memcache_timeout=None,
+        remote_cache_timeout=None,
         max_memcache_items=None,
         _options=None,
     ):
@@ -4959,12 +4962,13 @@ class Model(metaclass=MetaModel):
                 user controlled read-only periods.)
             use_cache (bool): Specifies whether to store entities in in-process
                 cache; overrides in-process cache policy for this operation.
-            use_memcache (bool): Specifies whether to store entities in
-                memcache; overrides memcache policy for this operation.
+            use_remote_cache (bool): Specifies whether to store entities in
+                remote cache; overrides remote cache policy for this operation.
             use_datastore (bool): Specifies whether to store entities in
                 Datastore; overrides Datastore policy for this operation.
-            memcache_timeout (int): Maximum lifetime for entities in memcache;
-                overrides memcache timeout policy for this operation.
+            remote_cache_timeout (int): Maximum lifetime for entities in
+                remote cache; overrides remote cache timeout policy for this
+                operation.
             max_memcache_items (int): Maximum batch size for the auto-batching
                 feature of the Context memcache methods. For example, with the
                 default size of max_memcache_items (100), up to 100 memcache
@@ -5030,9 +5034,9 @@ class Model(metaclass=MetaModel):
         deadline=None,
         force_writes=None,
         use_cache=None,
-        use_memcache=None,
+        use_remote_cache=None,
         use_datastore=None,
-        memcache_timeout=None,
+        remote_cache_timeout=None,
         max_memcache_items=None,
         _options=None,
     ):
@@ -5069,12 +5073,13 @@ class Model(metaclass=MetaModel):
                 user controlled read-only periods.)
             use_cache (bool): Specifies whether to store entities in in-process
                 cache; overrides in-process cache policy for this operation.
-            use_memcache (bool): Specifies whether to store entities in
-                memcache; overrides memcache policy for this operation.
+            use_remote_cache (bool): Specifies whether to store entities in
+                remote cache; overrides remote cache policy for this operation.
             use_datastore (bool): Specifies whether to store entities in
                 Datastore; overrides Datastore policy for this operation.
-            memcache_timeout (int): Maximum lifetime for entities in memcache;
-                overrides memcache timeout policy for this operation.
+            remote_cache_timeout (int): Maximum lifetime for entities in
+                remote cache; overrides remote cache timeout policy for this
+                operation.
             max_memcache_items (int): Maximum batch size for the auto-batching
                 feature of the Context memcache methods. For example, with the
                 default size of max_memcache_items (100), up to 100 memcache
@@ -5113,9 +5118,9 @@ class Model(metaclass=MetaModel):
         deadline=None,
         force_writes=None,
         use_cache=None,
-        use_memcache=None,
+        use_remote_cache=None,
         use_datastore=None,
-        memcache_timeout=None,
+        remote_cache_timeout=None,
         max_memcache_items=None,
         _options=None,
     ):
@@ -5152,12 +5157,13 @@ class Model(metaclass=MetaModel):
                 user controlled read-only periods.)
             use_cache (bool): Specifies whether to store entities in in-process
                 cache; overrides in-process cache policy for this operation.
-            use_memcache (bool): Specifies whether to store entities in
-                memcache; overrides memcache policy for this operation.
+            use_remote_cache (bool): Specifies whether to store entities in
+                remote cache; overrides remote cache policy for this operation.
             use_datastore (bool): Specifies whether to store entities in
                 Datastore; overrides Datastore policy for this operation.
-            memcache_timeout (int): Maximum lifetime for entities in memcache;
-                overrides memcache timeout policy for this operation.
+            remote_cache_timeout (int): Maximum lifetime for entities in
+                remote cache; overrides remote cache timeout policy for this
+                operation.
             max_memcache_items (int): Maximum batch size for the auto-batching
                 feature of the Context memcache methods. For example, with the
                 default size of max_memcache_items (100), up to 100 memcache
@@ -5209,9 +5215,9 @@ class Model(metaclass=MetaModel):
         deadline=None,
         force_writes=None,
         use_cache=None,
-        use_memcache=None,
+        use_remote_cache=None,
         use_datastore=None,
-        memcache_timeout=None,
+        remote_cache_timeout=None,
         max_memcache_items=None,
         _options=None,
         **kw_model_args,
@@ -5260,12 +5266,13 @@ class Model(metaclass=MetaModel):
                 user controlled read-only periods.)
             use_cache (bool): Specifies whether to store entities in in-process
                 cache; overrides in-process cache policy for this operation.
-            use_memcache (bool): Specifies whether to store entities in
-                memcache; overrides memcache policy for this operation.
+            use_remote_cache (bool): Specifies whether to store entities in
+                remote cache; overrides remote cache policy for this operation.
             use_datastore (bool): Specifies whether to store entities in
                 Datastore; overrides Datastore policy for this operation.
-            memcache_timeout (int): Maximum lifetime for entities in memcache;
-                overrides memcache timeout policy for this operation.
+            remote_cache_timeout (int): Maximum lifetime for entities in
+                remote cache; overrides remote cache timeout policy for this
+                operation.
             max_memcache_items (int): Maximum batch size for the auto-batching
                 feature of the Context memcache methods. For example, with the
                 default size of max_memcache_items (100), up to 100 memcache
@@ -5305,9 +5312,9 @@ class Model(metaclass=MetaModel):
         deadline=None,
         force_writes=None,
         use_cache=None,
-        use_memcache=None,
+        use_remote_cache=None,
         use_datastore=None,
-        memcache_timeout=None,
+        remote_cache_timeout=None,
         max_memcache_items=None,
         _options=None,
         **kw_model_args,
@@ -5350,12 +5357,13 @@ class Model(metaclass=MetaModel):
                 user controlled read-only periods.)
             use_cache (bool): Specifies whether to store entities in in-process
                 cache; overrides in-process cache policy for this operation.
-            use_memcache (bool): Specifies whether to store entities in
-                memcache; overrides memcache policy for this operation.
+            use_remote_cache (bool): Specifies whether to store entities in
+                remote cache; overrides remote cache policy for this operation.
             use_datastore (bool): Specifies whether to store entities in
                 Datastore; overrides Datastore policy for this operation.
-            memcache_timeout (int): Maximum lifetime for entities in memcache;
-                overrides memcache timeout policy for this operation.
+            remote_cache_timeout (int): Maximum lifetime for entities in
+                remote cache; overrides remote cache timeout policy for this
+                operation.
             max_memcache_items (int): Maximum batch size for the auto-batching
                 feature of the Context memcache methods. For example, with the
                 default size of max_memcache_items (100), up to 100 memcache
@@ -5537,8 +5545,8 @@ class Expando(Model):
              'superpower': StringProperty('superpower')}
 
     Note: You can inspect the properties of an expando instance using the
-    _properties attribute, as shown above. This property exists for plain Model instances
-    too; it is just not as interesting for those.
+    _properties attribute, as shown above. This property exists for plain
+    Model instances too; it is just not as interesting for those.
     """
 
     # Set this to False (in an Expando subclass or entity) to make
@@ -5609,9 +5617,9 @@ def get_multi_async(
     deadline=None,
     force_writes=None,
     use_cache=None,
-    use_memcache=None,
+    use_remote_cache=None,
     use_datastore=None,
-    memcache_timeout=None,
+    remote_cache_timeout=None,
     max_memcache_items=None,
     _options=None,
 ):
@@ -5639,12 +5647,13 @@ def get_multi_async(
             user controlled read-only periods.)
         use_cache (bool): Specifies whether to store entities in in-process
             cache; overrides in-process cache policy for this operation.
-        use_memcache (bool): Specifies whether to store entities in
-            memcache; overrides memcache policy for this operation.
+        use_remote_cache (bool): Specifies whether to store entities in
+            remote cache; overrides remote cache policy for this operation.
         use_datastore (bool): Specifies whether to store entities in
             Datastore; overrides Datastore policy for this operation.
-        memcache_timeout (int): Maximum lifetime for entities in memcache;
-            overrides memcache timeout policy for this operation.
+        remote_cache_timeout (int): Maximum lifetime for entities in
+            remote cache; overrides remote cache timeout policy for this
+            operation.
         max_memcache_items (int): Maximum batch size for the auto-batching
             feature of the Context memcache methods. For example, with the
             default size of max_memcache_items (100), up to 100 memcache
@@ -5670,9 +5679,9 @@ def get_multi(
     deadline=None,
     force_writes=None,
     use_cache=None,
-    use_memcache=None,
+    use_remote_cache=None,
     use_datastore=None,
-    memcache_timeout=None,
+    remote_cache_timeout=None,
     max_memcache_items=None,
     _options=None,
 ):
@@ -5700,12 +5709,13 @@ def get_multi(
             user controlled read-only periods.)
         use_cache (bool): Specifies whether to store entities in in-process
             cache; overrides in-process cache policy for this operation.
-        use_memcache (bool): Specifies whether to store entities in
-            memcache; overrides memcache policy for this operation.
+        use_remote_cache (bool): Specifies whether to store entities in
+            remote cache; overrides remote cache policy for this operation.
         use_datastore (bool): Specifies whether to store entities in
             Datastore; overrides Datastore policy for this operation.
-        memcache_timeout (int): Maximum lifetime for entities in memcache;
-            overrides memcache timeout policy for this operation.
+        remote_cache_timeout (int): Maximum lifetime for entities in
+            remote cache; overrides remote cache timeout policy for this
+            operation.
         max_memcache_items (int): Maximum batch size for the auto-batching
             feature of the Context memcache methods. For example, with the
             default size of max_memcache_items (100), up to 100 memcache
@@ -5730,9 +5740,9 @@ def put_multi_async(
     deadline=None,
     force_writes=None,
     use_cache=None,
-    use_memcache=None,
+    use_remote_cache=None,
     use_datastore=None,
-    memcache_timeout=None,
+    remote_cache_timeout=None,
     max_memcache_items=None,
     _options=None,
 ):
@@ -5752,11 +5762,11 @@ def put_multi_async(
             user controlled read-only periods.)
         use_cache (bool): Specifies whether to store entities in in-process
             cache; overrides in-process cache policy for this operation.
-        use_memcache (bool): Specifies whether to store entities in
+        use_remote_cache (bool): Specifies whether to store entities in
             memcache; overrides memcache policy for this operation.
         use_datastore (bool): Specifies whether to store entities in
             Datastore; overrides Datastore policy for this operation.
-        memcache_timeout (int): Maximum lifetime for entities in memcache;
+        remote_cache_timeout (int): Maximum lifetime for entities in memcache;
             overrides memcache timeout policy for this operation.
         max_memcache_items (int): Maximum batch size for the auto-batching
             feature of the Context memcache methods. For example, with the
@@ -5779,9 +5789,9 @@ def put_multi(
     deadline=None,
     force_writes=None,
     use_cache=None,
-    use_memcache=None,
+    use_remote_cache=None,
     use_datastore=None,
-    memcache_timeout=None,
+    remote_cache_timeout=None,
     max_memcache_items=None,
     _options=None,
 ):
@@ -5801,11 +5811,11 @@ def put_multi(
             user controlled read-only periods.)
         use_cache (bool): Specifies whether to store entities in in-process
             cache; overrides in-process cache policy for this operation.
-        use_memcache (bool): Specifies whether to store entities in
-            memcache; overrides memcache policy for this operation.
+        use_remote_cache (bool): Specifies whether to store entities in
+            remote cache; overrides remote cache policy for this operation.
         use_datastore (bool): Specifies whether to store entities in
             Datastore; overrides Datastore policy for this operation.
-        memcache_timeout (int): Maximum lifetime for entities in memcache;
+        remote_cache_timeout (int): Maximum lifetime for entities in memcache;
             overrides memcache timeout policy for this operation.
         max_memcache_items (int): Maximum batch size for the auto-batching
             feature of the Context memcache methods. For example, with the
@@ -5829,9 +5839,9 @@ def delete_multi_async(
     deadline=None,
     force_writes=None,
     use_cache=None,
-    use_memcache=None,
+    use_remote_cache=None,
     use_datastore=None,
-    memcache_timeout=None,
+    remote_cache_timeout=None,
     max_memcache_items=None,
     _options=None,
 ):
@@ -5851,12 +5861,12 @@ def delete_multi_async(
             user controlled read-only periods.)
         use_cache (bool): Specifies whether to store entities in in-process
             cache; overrides in-process cache policy for this operation.
-        use_memcache (bool): Specifies whether to store entities in
-            memcache; overrides memcache policy for this operation.
+        use_remote_cache (bool): Specifies whether to store entities in
+            remote cache; overrides remote cache policy for this operation.
         use_datastore (bool): Specifies whether to store entities in
             Datastore; overrides Datastore policy for this operation.
-        memcache_timeout (int): Maximum lifetime for entities in memcache;
-            overrides memcache timeout policy for this operation.
+        remote_cache_timeout (int): Maximum lifetime for entities in remote
+            cache; overrides remote cache timeout policy for this operation.
         max_memcache_items (int): Maximum batch size for the auto-batching
             feature of the Context memcache methods. For example, with the
             default size of max_memcache_items (100), up to 100 memcache
@@ -5878,9 +5888,9 @@ def delete_multi(
     deadline=None,
     force_writes=None,
     use_cache=None,
-    use_memcache=None,
+    use_remote_cache=None,
     use_datastore=None,
-    memcache_timeout=None,
+    remote_cache_timeout=None,
     max_memcache_items=None,
     _options=None,
 ):
@@ -5900,12 +5910,12 @@ def delete_multi(
             user controlled read-only periods.)
         use_cache (bool): Specifies whether to store entities in in-process
             cache; overrides in-process cache policy for this operation.
-        use_memcache (bool): Specifies whether to store entities in
-            memcache; overrides memcache policy for this operation.
+        use_remote_cache (bool): Specifies whether to store entities in
+            remote cache; overrides remote cache policy for this operation.
         use_datastore (bool): Specifies whether to store entities in
             Datastore; overrides Datastore policy for this operation.
-        memcache_timeout (int): Maximum lifetime for entities in memcache;
-            overrides memcache timeout policy for this operation.
+        remote_cache_timeout (int): Maximum lifetime for entities in remote
+            cache; overrides remote cache timeout policy for this operation.
         max_memcache_items (int): Maximum batch size for the auto-batching
             feature of the Context memcache methods. For example, with the
             default size of max_memcache_items (100), up to 100 memcache
