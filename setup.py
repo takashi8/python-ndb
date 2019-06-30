@@ -27,7 +27,7 @@ def main():
 
     setuptools.setup(
         name="google-cloud-ndb",
-        version="0.0.1.1",
+        version="0.0.2",
         description="NDB library for Google Cloud Datastore",
         long_description=readme,
         long_description_content_type="text/markdown",
